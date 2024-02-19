@@ -3,7 +3,7 @@ mod tests;
 
 use crate::event::types::Member;
 use redis::Commands;
-use std::env;
+use std::{env, str::FromStr};
 
 const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
 
@@ -17,7 +17,7 @@ pub trait DatabaseActions {
         &mut self,
         from_ts: i64,
         to_ts: i64,
-    ) -> Result<Vec<String>, String>;
+    ) -> Result<Vec<(i64, String)>, String>;
 }
 
 pub fn get_conn() -> Database {
@@ -69,7 +69,7 @@ impl DatabaseActions for Database {
         &mut self,
         from_ts: i64,
         to_ts: i64,
-    ) -> Result<Vec<String>, String> {
+    ) -> Result<Vec<(i64, String)>, String> {
         match self
             .conn
             .zrangebyscore_withscores::<&str, i64, i64, Vec<String>>(
@@ -77,7 +77,14 @@ impl DatabaseActions for Database {
                 from_ts,
                 to_ts,
             ) {
-            Ok(r) => Ok(r),
+            Ok(r) => {
+                let x = r
+                    .chunks(2)
+                    .map(|x| (FromStr::from_str(&x[1]).unwrap(), x[0].to_string()))
+                    .collect();
+
+                Ok(x)
+            }
             Err(_) => Err(format!(
                 "Failed to get member ids with range: ({}, {})",
                 from_ts, to_ts
