@@ -1,8 +1,6 @@
-use chrono::Local;
-
+use super::{Member, TeamJoinUser};
 use crate::database::{get_conn, DatabaseActions};
-
-use crate::event::types::{Member, TeamJoinUser};
+use chrono::Local;
 
 pub fn handle_team_join(user: &TeamJoinUser) {
     let timestamp = Local::now().timestamp();
