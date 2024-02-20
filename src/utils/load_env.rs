@@ -35,9 +35,36 @@ pub fn load_env() {
 
 #[cfg(test)]
 mod tests_load_env {
+    use super::load_env;
 
     #[test]
-    fn init() {
-        assert_eq!(1, 1)
+    fn should_pass_if_all_vars_are_setted() {
+        let vars = [
+            ("APP_ENV", "abc"),
+            ("APP_PORT", "abc"),
+            ("APP_BASE_ROUTE", "abc"),
+            ("SLACK_TOKEN", "abc"),
+            ("SLACK_API_APP_ID", "abc"),
+            ("REDIS_HOSTNAME", "abc"),
+            ("REDIS_PASSWORD", "abc"),
+            ("REDIS_URI_SCHEME", "abc"),
+        ];
+        for (key, value) in vars.iter() {
+            std::env::set_var(key, value);
+        }
+
+        load_env()
+    }
+
+    #[test]
+    #[should_panic]
+    fn should_panic_if_any_var_is_not_setted() {
+        let vars = [("APP_ENV", "abc"), ("APP_PORT", "abc")];
+
+        for (key, value) in vars.iter() {
+            std::env::set_var(key, value);
+        }
+
+        load_env()
     }
 }

@@ -77,18 +77,30 @@ impl DatabaseActions for Database {
                 from_ts,
                 to_ts,
             ) {
-            Ok(r) => {
-                let x = r
-                    .chunks(2)
-                    .map(|x| (FromStr::from_str(&x[1]).unwrap(), x[0].to_string()))
-                    .collect();
-
-                Ok(x)
-            }
+            Ok(r) => match zrange_vec_to_tuple_vec(r) {
+                Ok(v) => Ok(v),
+                Err(e) => Err(e),
+            },
             Err(_) => Err(format!(
                 "Failed to get member ids with range: ({}, {})",
                 from_ts, to_ts
             )),
         }
     }
+}
+
+fn zrange_vec_to_tuple_vec<T: FromStr>(v: Vec<String>) -> Result<Vec<(T, String)>, String>
+where
+    <T as std::str::FromStr>::Err: std::fmt::Debug,
+{
+    v.chunks(2)
+        .map(|x| {
+            let score = x[0].parse::<T>();
+            let value = x[1].to_string();
+            match score {
+                Ok(s) => Ok((s, value)),
+                Err(_) => Err("Failed to parse score".to_string()),
+            }
+        })
+        .collect()
 }
