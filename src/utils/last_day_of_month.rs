@@ -1,16 +1,19 @@
 use chrono::{Local, NaiveDate};
 
-pub fn last_day_of_month(year: i32, month: u32) -> Option<NaiveDate> {
+use super::ParseDateStrError;
+
+pub fn last_day_of_month(year: i32, month: u32) -> Result<NaiveDate, ParseDateStrError> {
     if !(1..=12).contains(&month) {
-        return None;
+        return Err(ParseDateStrError::DatePart(month.to_string()));
     }
 
     let now = Local::now().date_naive();
     let next_jan_first = NaiveDate::from_ymd_opt(year + 1, 1, 1).unwrap_or(now);
 
-    NaiveDate::from_ymd_opt(year, month + 1, 1)
+    Ok(NaiveDate::from_ymd_opt(year, month + 1, 1)
         .unwrap_or(next_jan_first)
         .pred_opt()
+        .unwrap())
 }
 
 #[cfg(test)]
@@ -39,7 +42,7 @@ mod test_last_day_of_month {
         let invalid_months = vec![0, 13];
         for month in invalid_months {
             let last_day = last_day_of_month(2023, month);
-            assert!(last_day.is_none());
+            assert!(last_day.is_err());
         }
     }
 }

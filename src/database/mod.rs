@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod tests;
 
-use crate::event::types::Member;
 use redis::Commands;
 use std::{env, str::FromStr};
+
+use crate::event::Member;
 
 const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
 

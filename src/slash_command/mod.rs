@@ -1,16 +1,31 @@
 #[cfg(test)]
 mod tests;
-mod types;
 
-use self::types::ListNewsEmployeesCommand;
 use crate::{
     database::{get_conn, DatabaseActions},
     utils::{
         group_members_by_month::group_members_by_month, parse_interval::parse_interval,
-        response_templates::new_members_template,
+        response_templates::new_members_template, ParseDateStrError,
     },
 };
 use rocket::{form::Form, http::Status, response::status};
+
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
+#[serde(tag = "command")]
+pub enum SlackCommand {
+    ListNewPeople,
+}
+
+#[derive(FromForm, Debug)]
+pub struct ListNewsEmployeesCommand {
+    pub token: String,
+    pub api_app_id: String,
+    pub command: String,
+    pub text: String,
+    pub response_url: String,
+}
 
 #[post(
     "/command/nuevos",
@@ -32,13 +47,24 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
                 }
                 Err(e) => {
                     println!("{}", e);
-                    status::Custom(Status::Ok, "error".to_string())
+                    status::Custom(Status::Ok, "Error desconocido".to_string())
                 }
             }
         }
-        Err(e) => {
-            println!("{}", e);
-            status::Custom(Status::Ok, "error".to_string())
-        }
+        Err(e) => match e {
+            ParseDateStrError::Date(invalid) => {
+                status::Custom(Status::Ok, format!("Fecha invalida: {}", invalid))
+            }
+            ParseDateStrError::DatePart(invalid) => status::Custom(
+                Status::Ok,
+                format!(
+                    "El fragmento de fecha: {} de {} es invalido",
+                    invalid, command.text
+                ),
+            ),
+            ParseDateStrError::Interval(invalid) => {
+                status::Custom(Status::Ok, format!("El intervalo {} es", invalid))
+            }
+        },
     }
 }

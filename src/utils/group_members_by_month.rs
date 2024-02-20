@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use super::{start_of_month::start_of_month, types::MembersByMonth};
+use super::{start_of_month::start_of_month, MembersByMonth};
 
 pub fn group_members_by_month(members: Vec<(i64, String)>) -> MembersByMonth {
     let mut members_by_month: MembersByMonth = BTreeMap::new();

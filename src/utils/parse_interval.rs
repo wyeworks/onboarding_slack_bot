@@ -1,8 +1,10 @@
 use chrono::{NaiveDateTime, Utc};
 
-use super::{parse_date_str::parse_date_str, types::DateRound};
+use super::{parse_date_str::parse_date_str, DateRound, ParseDateStrError};
 
-pub fn parse_interval(command_text: &str) -> Result<(NaiveDateTime, NaiveDateTime), String> {
+pub fn parse_interval(
+    command_text: &str,
+) -> Result<(NaiveDateTime, NaiveDateTime), ParseDateStrError> {
     let lower = command_text.to_lowercase();
     let v = lower
         .trim()
@@ -35,7 +37,7 @@ pub fn parse_interval(command_text: &str) -> Result<(NaiveDateTime, NaiveDateTim
                 (_, Err(e)) => Err(e),
             }
         }
-        _ => Err("Invalid prompt".to_string()),
+        _ => Err(ParseDateStrError::Interval(command_text.to_string())),
     }
 }
 

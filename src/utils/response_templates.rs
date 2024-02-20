@@ -1,6 +1,6 @@
 use chrono::{LocalResult, TimeZone, Utc};
 
-use super::types::MembersByMonth;
+use super::MembersByMonth;
 
 fn tag(id: &str) -> String {
     format!("<@{}>", id)
