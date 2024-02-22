@@ -1,6 +1,21 @@
-use chrono::{LocalResult, TimeZone, Utc};
+use chrono::{Datelike, LocalResult, TimeZone, Utc};
 
 use super::MembersByMonth;
+
+const SPANISH_MONTHS: [&str; 12] = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+];
 
 fn tag(id: &str) -> String {
     format!("<@{}>", id)
@@ -17,10 +32,15 @@ fn member_list(member_ids: Vec<String>) -> String {
 fn member_list_by_month(members_by_month: MembersByMonth) -> String {
     members_by_month
         .iter()
+        .rev()
         .map(|(&month, members)| {
             let str_month = Utc
                 .timestamp_opt(month, 0)
-                .map(|d| d.format("%B %Y").to_string())
+                .map(|d| {
+                    let fmt_month = SPANISH_MONTHS.get(d.month0() as usize).unwrap();
+                    let y = d.year();
+                    format!("{} {}", fmt_month, y)
+                })
                 .unwrap();
 
             format!("{}:\n", str_month) + &member_list(members.clone())
@@ -81,7 +101,7 @@ mod tests {
             vec!["DEF456".to_string(), "GHI789".to_string()],
         );
 
-        let expected = "February 2024:\n- <@ABC123>\n\nJune 2030:\n- <@DEF456>\n- <@GHI789>";
+        let expected = "Junio 2030:\n- <@DEF456>\n- <@GHI789>\n\nFebrero 2024:\n- <@ABC123>";
         assert_eq!(member_list_by_month(members_by_month), expected);
     }
 
@@ -101,7 +121,8 @@ mod tests {
         let to_ts = 1906502400; // 2030-06-01 00:00:00 UTC-0
         let result = new_members_template(from_ts, to_ts, members_by_month);
 
-        let expected = "Los que entraron desde el 01/02/2021 hasta el 01/06/2030 son: \nFebruary 2024:\n- <@ABC123>\n\nJune 2030:\n- <@DEF456>\n- <@GHI789>";
+        let expected = "Los que entraron desde el 01/02/2021 hasta el 01/06/2030 son: \nJunio 2030:\n- <@DEF456>\n- <@GHI789>\n\nFebrero 2024:\n- <@ABC123>";
+
         assert_eq!(result, expected);
     }
 }
