@@ -33,6 +33,7 @@ pub struct ListNewsEmployeesCommand {
     format = "application/x-www-form-urlencoded"
 )]
 pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::Custom<String> {
+    println!("slash command: {} {}", command.command, command.text);
     let parsed = parse_interval(&command.text);
     match parsed {
         Ok((from, to)) => {

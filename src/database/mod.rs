@@ -7,6 +7,7 @@ use std::{env, str::FromStr};
 use crate::event::Member;
 
 const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
+const MEMBER_HASH_NAME: &str = "members";
 
 pub struct Database {
     conn: redis::Connection,
@@ -54,7 +55,7 @@ impl DatabaseActions for Database {
         match serde_json::to_string(member) {
             Ok(json_member) => {
                 match self.conn.hset::<&str, &str, String, ()>(
-                    "members",
+                    MEMBER_HASH_NAME,
                     &member.id,
                     json_member.clone(),
                 ) {
@@ -74,7 +75,7 @@ impl DatabaseActions for Database {
         match self
             .conn
             .zrangebyscore_withscores::<&str, i64, i64, Vec<String>>(
-                "member_join_timestamp",
+                MEMBER_JOIN_SET_NAME,
                 from_ts,
                 to_ts,
             ) {
@@ -96,8 +97,9 @@ where
 {
     v.chunks(2)
         .map(|x| {
-            let score = x[0].parse::<T>();
-            let value = x[1].to_string();
+            let score = x[1].parse::<T>();
+            let value = x[0].to_string();
+            println!("score: {:?}", x);
             match score {
                 Ok(s) => Ok((s, value)),
                 Err(_) => Err("Failed to parse score".to_string()),

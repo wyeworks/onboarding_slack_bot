@@ -37,34 +37,32 @@ pub fn load_env() {
 mod tests_load_env {
     use super::load_env;
 
+    fn clear_env() {
+        for env_var in super::ENV_VAR_NAMES.iter() {
+            std::env::remove_var(env_var);
+        }
+    }
+
+    fn preload_mocked_vars(iterarable: &[&str]) {
+        for env_var in iterarable.iter() {
+            std::env::set_var(env_var, "abc");
+        }
+    }
+
     #[test]
     fn should_pass_if_all_vars_are_setted() {
-        let vars = [
-            ("APP_ENV", "abc"),
-            ("APP_PORT", "abc"),
-            ("APP_BASE_ROUTE", "abc"),
-            ("SLACK_TOKEN", "abc"),
-            ("SLACK_API_APP_ID", "abc"),
-            ("REDIS_HOSTNAME", "abc"),
-            ("REDIS_PASSWORD", "abc"),
-            ("REDIS_URI_SCHEME", "abc"),
-        ];
-        for (key, value) in vars.iter() {
-            std::env::set_var(key, value);
-        }
+        clear_env();
 
+        preload_mocked_vars(&super::ENV_VAR_NAMES);
         load_env()
     }
 
     #[test]
     #[should_panic]
     fn should_panic_if_any_var_is_not_setted() {
-        let vars = [("APP_ENV", "abc"), ("APP_PORT", "abc")];
+        clear_env();
 
-        for (key, value) in vars.iter() {
-            std::env::set_var(key, value);
-        }
-
+        preload_mocked_vars(&["APP_ENV", "APP_PORT"]);
         load_env()
     }
 }
