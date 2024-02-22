@@ -97,8 +97,9 @@ where
 {
     v.chunks(2)
         .map(|x| {
-            let score = x[0].parse::<T>();
-            let value = x[1].to_string();
+            let score = x[1].parse::<T>();
+            let value = x[0].to_string();
+            println!("score: {:?}", x);
             match score {
                 Ok(s) => Ok((s, value)),
                 Err(_) => Err("Failed to parse score".to_string()),
