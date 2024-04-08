@@ -7,6 +7,7 @@ mod utils;
 use event::event_route;
 use rocket::{Build, Config, Rocket};
 use slash_command::slash_command_route;
+use slash_command::help_command_route;
 use std::env;
 use utils::load_env::load_env;
 
@@ -26,7 +27,7 @@ fn init_rocket() -> Rocket<Build> {
 
     rocket::build().configure(&config).mount(
         env::var("APP_BASE_ROUTE").unwrap(),
-        routes![event_route, slash_command_route],
+        routes![event_route, slash_command_route, help_command_route],
     )
 }
 
