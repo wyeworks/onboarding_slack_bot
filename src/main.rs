@@ -7,7 +7,7 @@ mod utils;
 use event::event_route;
 use rocket::{Build, Config, Rocket};
 use slash_command::slash_command_route;
-use std::env;
+use std::{env, net::IpAddr};
 use utils::load_env::load_env;
 
 #[macro_use]
@@ -21,6 +21,10 @@ fn init_rocket() -> Rocket<Build> {
             .unwrap()
             .parse()
             .expect("APP_PORT is not a valid number"),
+        address: env::var("APP_ADDRESS")
+            .unwrap_or("127.0.0.1".to_string())
+            .parse::<IpAddr>()
+            .unwrap(),
         ..Config::debug_default()
     };
 

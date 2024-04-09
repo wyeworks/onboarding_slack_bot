@@ -1,7 +1,8 @@
 use dotenv::dotenv;
 use std::env;
 
-const ENV_VAR_NAMES: [&str; 7] = [
+const ENV_VAR_NAMES: [&str; 8] = [
+    "APP_ADDRESS",
     "APP_PORT",
     "APP_BASE_ROUTE",
     "SLACK_TOKEN",
