@@ -78,6 +78,6 @@ pub fn event_route(json_callback: Json<SlackCallback>) -> status::Custom<Json<Sl
 
 fn handle_event(event: Event) {
     match event {
-        Event::TeamJoin { user } => handle_team_join(&user),
+        Event::TeamJoin { user } => handle_team_join(user),
     }
 }
