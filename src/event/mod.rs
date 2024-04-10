@@ -29,7 +29,7 @@ pub enum Event {
     TeamJoin { user: TeamJoinUser },
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct TeamJoinUser {
     pub id: String,
     pub profile: TeamJoinUserProfile,
@@ -37,7 +37,7 @@ pub struct TeamJoinUser {
     pub tz_label: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct TeamJoinUserProfile {
     pub email: String,
     pub display_name: String,
@@ -47,8 +47,11 @@ pub struct TeamJoinUserProfile {
 pub struct Member {
     pub id: String,
     pub email: String,
+    #[serde(rename = "name")]
     pub full_name: String,
+    pub date: String, 
     pub country: String,
+    #[serde(rename = "raw", default)]
     pub _raw: TeamJoinUser,
 }
 
