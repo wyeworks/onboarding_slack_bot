@@ -6,8 +6,8 @@ mod utils;
 
 use event::event_route;
 use rocket::{Build, Config, Rocket};
-use slash_command::slash_command_route;
 use slash_command::help_command_route;
+use slash_command::slash_command_route;
 use std::{env, net::IpAddr};
 use utils::load_env::load_env;
 
