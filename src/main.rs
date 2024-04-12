@@ -44,7 +44,6 @@ fn init() -> _ {
         let command = &args[1];
         let file_path = &args[2];
         if command == "seed-db" {
-            // Attempt to seed the database and handle the result
             match database::db_seeder::seed_database(file_path) {
                 Ok(_) => {
                     println!("Database seeded successfully.");
