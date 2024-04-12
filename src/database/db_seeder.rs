@@ -2,8 +2,8 @@ use crate::database::get_conn;
 use crate::database::{Database, DatabaseActions};
 use crate::event::Member;
 use chrono::NaiveDate;
-use serde::Deserialize;
 use core::panic;
+use serde::Deserialize;
 use std::error::Error;
 use std::fs;
 
@@ -41,10 +41,10 @@ pub fn seed_database(file_path: &str) -> Result<(), Box<dyn Error>> {
 
         let date = NaiveDate::parse_from_str(&seed_member.date, "%d/%m/%Y")?;
         // let timestamp = date.and_hms_opt(0, 0, 0).timestamp();
-        let timestamp = match date.and_hms_opt(0, 0, 0){
+        let timestamp = match date.and_hms_opt(0, 0, 0) {
             Some(timestamp) => timestamp.timestamp(),
-            None => panic!("Failed to convert date to timestamp")
-        }; 
+            None => panic!("Failed to convert date to timestamp"),
+        };
 
         database.add_member_to_set(&member.id, timestamp)?;
     }
