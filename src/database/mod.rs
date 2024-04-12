@@ -9,6 +9,8 @@ use crate::event::Member;
 const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
 const MEMBER_HASH_NAME: &str = "members";
 
+pub mod db_seeder;
+
 pub struct Database {
     conn: redis::Connection,
 }
