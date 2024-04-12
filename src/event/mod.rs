@@ -49,7 +49,7 @@ pub struct Member {
     pub email: String,
     pub full_name: String,
     pub country: String,
-    pub date: String
+    pub date: String,
 }
 
 #[post("/event", data = "<json_callback>", format = "json")]
