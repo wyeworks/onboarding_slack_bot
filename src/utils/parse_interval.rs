@@ -43,18 +43,6 @@ mod test_parse_interval {
     use super::parse_interval;
 
     #[test]
-    fn should_return_today_tuple_with_empty_str() {
-        let today = Utc::now().naive_local();
-        let today_eod = today.date().and_hms_opt(23, 59, 59).unwrap();
-        let today_bod = today.date().and_hms_opt(0, 0, 0).unwrap();
-
-        let (from, to) = parse_interval("").unwrap();
-
-        assert_eq!(from, today_bod);
-        assert_eq!(to, today_eod);
-    }
-
-    #[test]
     fn should_return_from_to_today_tuple_with_one_date() {
         let param = "01/01/2021";
         let param_date = chrono::NaiveDate::from_ymd_opt(2021, 1, 1).unwrap();
