@@ -20,4 +20,5 @@ pub enum ParseDateStrError {
     DatePart(String),
     Date(String),
     Interval(String),
+    NoDate,
 }

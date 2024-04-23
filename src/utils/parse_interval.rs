@@ -14,10 +14,7 @@ pub fn parse_interval(
 
     match v.len() {
         0 => {
-            let today = Utc::now().naive_local();
-            let from = today.date().and_hms_opt(0, 0, 0).unwrap();
-            let to = today.date().and_hms_opt(23, 59, 59).unwrap();
-            Ok((from, to))
+            Err(ParseDateStrError::NoDate)
         }
         1 => match (
             parse_date_str(v[0], DateRound::Floor),
