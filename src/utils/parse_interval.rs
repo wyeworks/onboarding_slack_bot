@@ -13,9 +13,7 @@ pub fn parse_interval(
         .collect::<Vec<&str>>();
 
     match v.len() {
-        0 => {
-            Err(ParseDateStrError::NoDate)
-        }
+        0 => Err(ParseDateStrError::NoDate),
         1 => match (
             parse_date_str(v[0], DateRound::Floor),
             parse_date_str(v[0], DateRound::Ceil),
