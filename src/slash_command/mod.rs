@@ -43,8 +43,13 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
             match get_conn().get_member_id_by_ts_range(from_ts, to_ts) {
                 Ok(members) => {
                     let members_by_month = group_members_by_month(members);
-                    let formated_members = new_members_template(from_ts, to_ts, members_by_month);
-                    status::Custom(Status::Ok, formated_members)
+
+                    if members_by_month.is_empty() {
+                        status::Custom(Status::Ok, "No se encontraron resultados. Intentá cambiando las fechas o escribí /ayuda para ver opciones de formato.".to_string())
+                    } else {
+                        let formated_members = new_members_template(from_ts, to_ts, members_by_month);
+                        status::Custom(Status::Ok, formated_members)
+                    }
                 }
                 Err(e) => {
                     println!("{}", e);
@@ -54,12 +59,12 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
         }
         Err(e) => match e {
             ParseDateStrError::Date(invalid) => {
-                status::Custom(Status::Ok, format!("Fecha invalida: {}", invalid))
+                status::Custom(Status::Ok, format!("Fecha invalida: {}. Escribí /ayuda para ver opciones de formato.", invalid))
             }
             ParseDateStrError::DatePart(invalid) => status::Custom(
                 Status::Ok,
                 format!(
-                    "El fragmento de fecha: {} de {} es invalido",
+                    "El fragmento de fecha: {} de {} es inválido. Escribí /ayuda para ver opciones de formato.",
                     invalid, command.text
                 ),
             ),
