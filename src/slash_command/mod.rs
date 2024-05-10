@@ -4,8 +4,8 @@ mod tests;
 use crate::{
     database::{get_conn, DatabaseActions},
     utils::{
-        group_members_by_month::group_members_by_month, parse_interval::parse_interval,
-        response_templates::new_members_template, ParseDateStrError,
+        group_employees_by_month::group_employees_by_month, parse_interval::parse_interval,
+        response_templates::new_employees_template, ParseDateStrError,
     },
 };
 use rocket::{form::Form, http::Status, response::status};
@@ -40,11 +40,11 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
             let from_ts = from.timestamp();
             let to_ts = to.timestamp();
             println!("from: {}, to: {}", from_ts, to_ts);
-            match get_conn().get_member_id_by_ts_range(from_ts, to_ts) {
-                Ok(members) => {
-                    let members_by_month = group_members_by_month(members);
-                    let formated_members = new_members_template(from_ts, to_ts, members_by_month);
-                    status::Custom(Status::Ok, formated_members)
+            match get_conn().get_employee_id_by_ts_range(from_ts, to_ts) {
+                Ok(employees) => {
+                    let employees_by_month = group_employees_by_month(employees);
+                    let formated_employees = new_employees_template(from_ts, to_ts, employees_by_month);
+                    status::Custom(Status::Ok, formated_employees)
                 }
                 Err(e) => {
                     println!("{}", e);

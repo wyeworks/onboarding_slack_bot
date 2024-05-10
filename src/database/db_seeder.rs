@@ -18,8 +18,8 @@ struct SeedEmployee {
 
 fn load_seed_employees(file_path: &str) -> Result<Vec<SeedEmployee>, Box<dyn Error>> {
     let file_content = fs::read_to_string(file_path)?;
-    let seed_members: Vec<SeedEmployee> = serde_json::from_str(&file_content)?;
-    Ok(seed_members)
+    let seed_employees: Vec<SeedEmployee> = serde_json::from_str(&file_content)?;
+    Ok(seed_employees)
 }
 
 fn to_employee(seed_employee: &SeedEmployee) -> Employee {
@@ -36,8 +36,8 @@ pub fn seed_database(file_path: &str) -> Result<(), Box<dyn Error>> {
     let mut database: Database = get_conn();
 
     for seed_employee in seed_employees {
-        let member = to_employee(&seed_employee);
-        database.save_member(&member)?;
+        let employee = to_employee(&seed_employee);
+        database.save_employee(&employee)?;
 
         let date = NaiveDate::parse_from_str(&seed_employee.date, "%d/%m/%Y")?;
         // let timestamp = date.and_hms_opt(0, 0, 0).timestamp();
@@ -46,7 +46,7 @@ pub fn seed_database(file_path: &str) -> Result<(), Box<dyn Error>> {
             None => panic!("Failed to convert date to timestamp"),
         };
 
-        database.add_member_to_set(&member.id, timestamp)?;
+        database.add_employee_to_set(&employee.id, timestamp)?;
     }
 
     Ok(())

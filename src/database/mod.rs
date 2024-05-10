@@ -6,8 +6,8 @@ use std::{env, str::FromStr};
 
 use crate::event::Employee;
 
-const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
-const MEMBER_HASH_NAME: &str = "members";
+const EMPLOYEE_JOIN_SET_NAME: &str = "employee_join_timestamp";
+const EMPLOYEE_HASH_NAME: &str = "employees";
 
 pub mod db_seeder;
 
@@ -15,9 +15,9 @@ pub struct Database {
     conn: redis::Connection,
 }
 pub trait DatabaseActions {
-    fn add_member_to_set(&mut self, member_id: &str, ts: i64) -> Result<(), String>;
-    fn save_member(&mut self, member: &Employee) -> Result<(), String>;
-    fn get_member_id_by_ts_range(
+    fn add_employee_to_set(&mut self, employee_id: &str, ts: i64) -> Result<(), String>;
+    fn save_employee(&mut self, employee: &Employee) -> Result<(), String>;
+    fn get_employee_id_by_ts_range(
         &mut self,
         from_ts: i64,
         to_ts: i64,
@@ -39,37 +39,37 @@ pub fn get_conn() -> Database {
 }
 
 impl DatabaseActions for Database {
-    fn add_member_to_set(&mut self, member_id: &str, ts: i64) -> Result<(), String> {
+    fn add_employee_to_set(&mut self, employee_id: &str, ts: i64) -> Result<(), String> {
         match self.conn.zadd::<&str, i64, String, ()>(
-            MEMBER_JOIN_SET_NAME,
-            member_id.to_string(),
+            EMPLOYEE_JOIN_SET_NAME,
+            employee_id.to_string(),
             ts,
         ) {
             Ok(_) => Ok(()),
             Err(_) => Err(format!(
-                "Failed to add member: {} and ts: {} to set",
-                member_id, ts
+                "Failed to add employee: {} and ts: {} to set",
+                employee_id, ts
             )),
         }
     }
 
-    fn save_member(&mut self, member: &Employee) -> Result<(), String> {
-        match serde_json::to_string(member) {
-            Ok(json_member) => {
+    fn save_employee(&mut self, employee: &Employee) -> Result<(), String> {
+        match serde_json::to_string(employee) {
+            Ok(json_employee) => {
                 match self.conn.hset::<&str, &str, String, ()>(
-                    MEMBER_HASH_NAME,
-                    &member.id,
-                    json_member.clone(),
+                    EMPLOYEE_HASH_NAME,
+                    &employee.id,
+                    json_employee.clone(),
                 ) {
                     Ok(_) => Ok(()),
-                    Err(_) => Err(format!("Failed to save member: {}", json_member)),
+                    Err(_) => Err(format!("Failed to save employee: {}", json_employee)),
                 }
             }
-            Err(_) => Err("Failed to convert member to JSON string".to_string()),
+            Err(_) => Err("Failed to convert employee to JSON string".to_string()),
         }
     }
 
-    fn get_member_id_by_ts_range(
+    fn get_employee_id_by_ts_range(
         &mut self,
         from_ts: i64,
         to_ts: i64,
@@ -77,7 +77,7 @@ impl DatabaseActions for Database {
         match self
             .conn
             .zrangebyscore_withscores::<&str, i64, i64, Vec<String>>(
-                MEMBER_JOIN_SET_NAME,
+                EMPLOYEE_JOIN_SET_NAME,
                 from_ts,
                 to_ts,
             ) {
@@ -86,7 +86,7 @@ impl DatabaseActions for Database {
                 Err(e) => Err(e),
             },
             Err(_) => Err(format!(
-                "Failed to get member ids with range: ({}, {})",
+                "Failed to get employee ids with range: ({}, {})",
                 from_ts, to_ts
             )),
         }

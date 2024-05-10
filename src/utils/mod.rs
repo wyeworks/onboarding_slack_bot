@@ -1,4 +1,4 @@
-pub mod group_members_by_month;
+pub mod group_employees_by_month;
 pub mod last_day_of_month;
 pub mod load_env;
 pub mod parse_date_str;
@@ -13,7 +13,7 @@ pub enum DateRound {
     Floor,
 }
 
-pub type MembersByMonth = BTreeMap<i64, Vec<String>>;
+pub type EmployeesByMonth = BTreeMap<i64, Vec<String>>;
 
 #[derive(Debug)]
 pub enum ParseDateStrError {
