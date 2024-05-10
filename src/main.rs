@@ -1,6 +1,7 @@
 mod authenticate;
 mod database;
 mod event;
+mod pg_database;
 mod slash_command;
 mod utils;
 
@@ -17,6 +18,8 @@ extern crate dotenv;
 extern crate redis;
 
 fn init_rocket() -> Rocket<Build> {
+    let _pg_connection = pg_database::establish_connection();
+
     let config = Config {
         port: env::var("APP_PORT")
             .unwrap()
