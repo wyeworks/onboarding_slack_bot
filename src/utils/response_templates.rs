@@ -49,7 +49,11 @@ fn employee_list_by_month(employees_by_month: EmployeesByMonth) -> String {
         .join("\n\n")
 }
 
-pub fn new_employees_template(from_ts: i64, to_ts: i64, employees_by_month: EmployeesByMonth) -> String {
+pub fn new_employees_template(
+    from_ts: i64,
+    to_ts: i64,
+    employees_by_month: EmployeesByMonth,
+) -> String {
     let [from, to] = [from_ts, to_ts].map(|d| {
         Utc.timestamp_opt(d, 0)
             .map(|d| d.format("%d/%m/%Y").to_string())
