@@ -4,7 +4,7 @@ mod tests;
 use redis::Commands;
 use std::{env, str::FromStr};
 
-use crate::event::Member;
+use crate::event::Employee;
 
 const MEMBER_JOIN_SET_NAME: &str = "member_join_timestamp";
 const MEMBER_HASH_NAME: &str = "members";
@@ -16,7 +16,7 @@ pub struct Database {
 }
 pub trait DatabaseActions {
     fn add_member_to_set(&mut self, member_id: &str, ts: i64) -> Result<(), String>;
-    fn save_member(&mut self, member: &Member) -> Result<(), String>;
+    fn save_member(&mut self, member: &Employee) -> Result<(), String>;
     fn get_member_id_by_ts_range(
         &mut self,
         from_ts: i64,
@@ -53,7 +53,7 @@ impl DatabaseActions for Database {
         }
     }
 
-    fn save_member(&mut self, member: &Member) -> Result<(), String> {
+    fn save_member(&mut self, member: &Employee) -> Result<(), String> {
         match serde_json::to_string(member) {
             Ok(json_member) => {
                 match self.conn.hset::<&str, &str, String, ()>(

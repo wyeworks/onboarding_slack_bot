@@ -1,11 +1,11 @@
-use super::{Member, TeamJoinUser};
+use super::{Employee, TeamJoinUser};
 use crate::database::{get_conn, DatabaseActions};
 use chrono::Local;
 
 pub fn handle_team_join(user: TeamJoinUser) {
     let timestamp = Local::now().timestamp();
 
-    let member = Member {
+    let member = Employee {
         id: user.id,
         email: user.profile.email,
         full_name: user.profile.display_name,
