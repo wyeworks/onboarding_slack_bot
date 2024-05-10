@@ -1,7 +1,9 @@
 mod authenticate;
 mod database;
 mod event;
+mod models;
 mod pg_database;
+mod schema;
 mod slash_command;
 mod utils;
 
