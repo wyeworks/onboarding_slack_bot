@@ -1,13 +1,12 @@
 #[cfg(test)]
 mod tests;
 
-use crate::{
-    database::{get_conn, DatabaseActions},
-    utils::{
-        group_employees_by_month::group_employees_by_month, parse_interval::parse_interval,
-        response_templates::new_employees_template, ParseDateStrError,
-    },
+use crate::pg_database::get_employee_by_ts_range;
+use crate::utils::{
+    group_employees_by_month::group_employees_by_month, parse_interval::parse_interval,
+    response_templates::new_employees_template, ParseDateStrError,
 };
+
 use rocket::{form::Form, http::Status, response::status};
 
 use serde::Deserialize;
@@ -37,21 +36,14 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
     let parsed = parse_interval(&command.text);
     match parsed {
         Ok((from, to)) => {
-            let from_ts = from.timestamp();
-            let to_ts = to.timestamp();
-            println!("from: {}, to: {}", from_ts, to_ts);
-            match get_conn().get_employee_id_by_ts_range(from_ts, to_ts) {
-                Ok(employees) => {
-                    let employees_by_month = group_employees_by_month(employees);
-                    let formated_employees =
-                        new_employees_template(from_ts, to_ts, employees_by_month);
-                    status::Custom(Status::Ok, formated_employees)
-                }
-                Err(e) => {
-                    println!("{}", e);
-                    status::Custom(Status::Ok, "Error desconocido".to_string())
-                }
-            }
+            let employees = get_employee_by_ts_range(from, to);
+
+            let employees_by_month = group_employees_by_month(employees);
+
+            status::Custom(
+                Status::Ok,
+                serde_json::to_string(&employees_by_month).unwrap(),
+            )
         }
         Err(e) => match e {
             ParseDateStrError::Date(invalid) => {
