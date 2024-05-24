@@ -2,10 +2,10 @@
 
 diesel::table! {
     employees (id) {
-        id -> Uuid,
+        id -> Varchar,
         email -> Varchar,
         full_name -> Varchar,
-        country -> Varchar,
+        country -> Nullable<Varchar>,
         join_date -> Timestamp,
     }
 }
@@ -13,8 +13,8 @@ diesel::table! {
 diesel::table! {
     onboardees (project_id, employee_id) {
         project_id -> Uuid,
-        employee_id -> Uuid,
-        onboarding_date -> Date,
+        employee_id -> Varchar,
+        onboarding_date -> Timestamp,
     }
 }
 
@@ -22,7 +22,7 @@ diesel::table! {
     projects (id) {
         id -> Uuid,
         name -> Varchar,
-        admin_id -> Uuid,
+        admin_id -> Varchar,
     }
 }
 
