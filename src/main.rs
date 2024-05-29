@@ -1,6 +1,8 @@
 mod authenticate;
-mod database;
 mod event;
+mod models;
+mod pg_database;
+mod schema;
 mod slash_command;
 mod utils;
 
@@ -44,7 +46,7 @@ fn init() -> _ {
         let command = &args[1];
         let file_path = &args[2];
         if command == "seed-db" {
-            match database::db_seeder::seed_database(file_path) {
+            match pg_database::db_seeder::seed_database(file_path) {
                 Ok(_) => {
                     println!("Database seeded successfully.");
                 }

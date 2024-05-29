@@ -1,13 +1,12 @@
 #[cfg(test)]
 mod tests;
 
-use crate::{
-    database::{get_conn, DatabaseActions},
-    utils::{
-        group_members_by_month::group_members_by_month, parse_interval::parse_interval,
-        response_templates::new_members_template, ParseDateStrError,
-    },
+use crate::pg_database::get_employee_by_ts_range;
+use crate::utils::{
+    group_employees_by_month::group_employees_by_month, parse_interval::parse_interval,
+    response_templates::new_employees_template, ParseDateStrError,
 };
+
 use rocket::{form::Form, http::Status, response::status};
 
 use serde::Deserialize;
@@ -37,29 +36,25 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
     let parsed = parse_interval(&command.text);
     match parsed {
         Ok((from, to)) => {
-            let from_ts = from.timestamp();
-            let to_ts = to.timestamp();
-            println!("from: {}, to: {}", from_ts, to_ts);
-            match get_conn().get_member_id_by_ts_range(from_ts, to_ts) {
-                Ok(members) => {
-                    let members_by_month = group_members_by_month(members);
-                    let formated_members = new_members_template(from_ts, to_ts, members_by_month);
-                    status::Custom(Status::Ok, formated_members)
-                }
-                Err(e) => {
-                    println!("{}", e);
-                    status::Custom(Status::Ok, "Error desconocido".to_string())
-                }
-            }
+            let employees = get_employee_by_ts_range(from, to);
+
+            let employees_by_month = group_employees_by_month(employees);
+
+            let formatted_employees = new_employees_template(from.and_utc().timestamp(), to.and_utc().timestamp(), employees_by_month);
+
+            status::Custom(
+                Status::Ok,
+                formatted_employees,
+            )
         }
         Err(e) => match e {
             ParseDateStrError::Date(invalid) => {
-                status::Custom(Status::Ok, format!("Fecha invalida: {}", invalid))
+                status::Custom(Status::Ok, format!("Fecha invalida: {}. Escribí /ayuda para ver opciones de formato.", invalid))
             }
             ParseDateStrError::DatePart(invalid) => status::Custom(
                 Status::Ok,
                 format!(
-                    "El fragmento de fecha: {} de {} es invalido",
+                    "El fragmento de fecha: {} de {} es inválido. Escribí /ayuda para ver opciones de formato.",
                     invalid, command.text
                 ),
             ),

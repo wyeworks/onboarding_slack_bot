@@ -5,6 +5,7 @@ pub fn start_of_month(ts: i64) -> i64 {
         .map(|d| NaiveDate::from_ymd_opt(d.year(), d.month(), 1).unwrap())
         .map(|d| d.and_hms_opt(0, 0, 0).unwrap())
         .unwrap()
+        .and_utc()
         .timestamp()
 }
 
