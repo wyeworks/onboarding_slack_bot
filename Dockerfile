@@ -14,5 +14,11 @@ RUN cargo build --release --bin onboarding_bot_slack
 # We do not need the Rust toolchain to run the binary!
 FROM debian:bookworm-slim  AS runtime
 WORKDIR /app
+
+# Install libpq-dev for PostgreSQL client libraries
+RUN apt-get update && \
+    apt-get install -y libpq5 && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/target/release/onboarding_bot_slack /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/onboarding_bot_slack"]
