@@ -38,8 +38,6 @@ pub fn parse_interval(
 
 #[cfg(test)]
 mod test_parse_interval {
-    use chrono::Utc;
-
     use super::parse_interval;
 
     #[test]

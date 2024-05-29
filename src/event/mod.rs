@@ -44,7 +44,7 @@ pub struct TeamJoinUserProfile {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct Member {
+pub struct Employee {
     pub id: String,
     pub email: String,
     pub full_name: String,
