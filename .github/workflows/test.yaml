@@ -29,5 +29,7 @@ jobs:
             ~/.cargo/registry/cache
             target
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('Cargo.lock') }}
+      - name: Run cleanup
+        run: cargo clean
       - name: Run tests
         run: cargo test
