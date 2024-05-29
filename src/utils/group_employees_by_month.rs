@@ -9,7 +9,7 @@ pub fn group_employees_by_month(employees: Vec<Employee>) -> EmployeesByMonth {
 
     for employee in employees {
         let id = employee.id.clone();
-        let ts = employee.join_date.timestamp();
+        let ts = employee.join_date.and_utc().timestamp();
 
         match employees_by_month.get(&start_of_month(ts)) {
             Some(employees) => {

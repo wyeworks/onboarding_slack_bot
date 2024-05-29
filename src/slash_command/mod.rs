@@ -40,9 +40,11 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
 
             let employees_by_month = group_employees_by_month(employees);
 
+            let formatted_employees = new_employees_template(from.and_utc().timestamp(), to.and_utc().timestamp(), employees_by_month);
+
             status::Custom(
                 Status::Ok,
-                serde_json::to_string(&employees_by_month).unwrap(),
+                formatted_employees,
             )
         }
         Err(e) => match e {
