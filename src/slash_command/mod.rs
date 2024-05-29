@@ -55,12 +55,12 @@ pub fn slash_command_route(command: Form<ListNewsEmployeesCommand>) -> status::C
         }
         Err(e) => match e {
             ParseDateStrError::Date(invalid) => {
-                status::Custom(Status::Ok, format!("Fecha invalida: {}", invalid))
+                status::Custom(Status::Ok, format!("Fecha invalida: {}. Escribí /ayuda para ver opciones de formato.", invalid))
             }
             ParseDateStrError::DatePart(invalid) => status::Custom(
                 Status::Ok,
                 format!(
-                    "El fragmento de fecha: {} de {} es invalido",
+                    "El fragmento de fecha: {} de {} es inválido. Escribí /ayuda para ver opciones de formato.",
                     invalid, command.text
                 ),
             ),
