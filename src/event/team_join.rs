@@ -12,8 +12,4 @@ pub fn handle_team_join(user: TeamJoinUser) {
         country: Some(user.tz_label.to_lowercase().replace(" time", "")),
         join_date: Local::now().naive_utc(),
     };
-
-    //  let mut db = get_conn();
-    // let _ = db.add_employee_to_set(&employee.id, timestamp);
-    // let _ = db.save_employee(&employee);
 }

@@ -43,15 +43,6 @@ pub struct TeamJoinUserProfile {
     pub display_name: String,
 }
 
-// #[derive(Debug, Deserialize, Serialize, Clone)]
-// pub struct Employee {
-//     pub id: String,
-//     pub email: String,
-//     pub full_name: String,
-//     pub country: String,
-//     pub date: String,
-// }
-
 #[post("/event", data = "<json_callback>", format = "json")]
 pub fn event_route(json_callback: Json<SlackCallback>) -> status::Custom<Json<SlackCallback>> {
     println!("{:?}", json_callback);
