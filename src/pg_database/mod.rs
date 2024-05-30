@@ -23,7 +23,7 @@ pub fn save_employee(employee: &Employee) -> Employee {
         .values(&new_employee)
         .returning(Employee::as_returning())
         .get_result(conn)
-        .expect("Error saving new post")
+        .expect("Error saving new employee")
 }
 
 pub fn get_employee_by_ts_range(from_ts: NaiveDateTime, to_ts: NaiveDateTime) -> Vec<Employee> {
@@ -35,7 +35,7 @@ pub fn get_employee_by_ts_range(from_ts: NaiveDateTime, to_ts: NaiveDateTime) ->
                 .and(employees::join_date.le(to_ts)),
         )
         .load::<Employee>(conn)
-        .expect("Error loading posts")
+        .expect("Error loading employees")
 }
 
 pub fn establish_connection() -> PgConnection {
