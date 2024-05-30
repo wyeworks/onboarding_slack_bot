@@ -1,10 +1,8 @@
 use super::TeamJoinUser;
-use crate::models::Employee;
+use crate::{models::Employee, pg_database::save_employee};
 use chrono::Local;
 
 pub fn handle_team_join(user: TeamJoinUser) {
-    let timestamp = Local::now().timestamp();
-
     let employee = Employee {
         id: user.id,
         email: user.profile.email,
@@ -12,4 +10,6 @@ pub fn handle_team_join(user: TeamJoinUser) {
         country: Some(user.tz_label.to_lowercase().replace(" time", "")),
         join_date: Local::now().naive_utc(),
     };
+
+    save_employee(&employee);
 }
