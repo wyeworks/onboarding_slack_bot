@@ -7,16 +7,27 @@ mod slash_command;
 mod utils;
 
 use event::event_route;
+use pg_database::establish_connection;
 use rocket::{Build, Config, Rocket};
 use slash_command::help_command_route;
 use slash_command::slash_command_route;
 use std::{env, net::IpAddr};
 use utils::load_env::load_env;
 
+
+
 #[macro_use]
 extern crate rocket;
 extern crate dotenv;
 extern crate redis;
+
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 fn init_rocket() -> Rocket<Build> {
     let config = Config {
@@ -40,6 +51,9 @@ fn init_rocket() -> Rocket<Build> {
 #[launch]
 fn init() -> _ {
     load_env();
+    let mut connection = establish_connection();
+
+    connection.run_pending_migrations(MIGRATIONS).expect("Failed to run migrations");
 
     let args: Vec<String> = env::args().collect();
     if args.len() > 2 {
