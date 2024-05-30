@@ -14,8 +14,6 @@ use slash_command::slash_command_route;
 use std::{env, net::IpAddr};
 use utils::load_env::load_env;
 
-
-
 #[macro_use]
 extern crate rocket;
 extern crate dotenv;
@@ -53,7 +51,9 @@ fn init() -> _ {
     load_env();
     let mut connection = establish_connection();
 
-    connection.run_pending_migrations(MIGRATIONS).expect("Failed to run migrations");
+    connection
+        .run_pending_migrations(MIGRATIONS)
+        .expect("Failed to run migrations");
 
     let args: Vec<String> = env::args().collect();
     if args.len() > 2 {
