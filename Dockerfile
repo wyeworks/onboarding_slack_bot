@@ -5,20 +5,24 @@ FROM chef AS planner
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
-FROM chef AS builder 
+FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release --bin onboarding_bot_slack
 
 # We do not need the Rust toolchain to run the binary!
-FROM debian:bookworm-slim  AS runtime
+FROM debian:bookworm-slim AS runtime
 WORKDIR /app
 
-# Install libpq-dev for PostgreSQL client libraries
+# Install libpq5 for PostgreSQL client libraries
 RUN apt-get update && \
     apt-get install -y libpq5 && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/target/release/onboarding_bot_slack /usr/local/bin
+COPY --from=builder /app/migrations /app/migrations
+# COPY "db_seed_with_timestamp.json" "/app/db_seed_with_timestamp.json"
+
+
 ENTRYPOINT ["/usr/local/bin/onboarding_bot_slack"]
