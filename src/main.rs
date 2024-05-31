@@ -9,8 +9,7 @@ mod utils;
 use event::event_route;
 use pg_database::establish_connection;
 use rocket::{Build, Config, Rocket};
-use slash_command::nuevos_command::nuevos_command_route;
-use slash_command::ayuda_command::ayuda_command_route;
+use slash_command::{ayuda_command, nuevo_proyecto_command, nuevos_command};
 
 use std::{env, net::IpAddr};
 use utils::load_env::load_env;
@@ -19,11 +18,6 @@ use utils::load_env::load_env;
 extern crate rocket;
 extern crate dotenv;
 extern crate redis;
-
-#[macro_use]
-extern crate diesel;
-#[macro_use]
-extern crate diesel_migrations;
 
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
@@ -43,7 +37,12 @@ fn init_rocket() -> Rocket<Build> {
 
     rocket::build().configure(&config).mount(
         env::var("APP_BASE_ROUTE").unwrap(),
-        routes![event_route, nuevos_command_route, ayuda_command_route],
+        routes![
+            event_route,
+            nuevos_command::nuevos_command_route,
+            ayuda_command::ayuda_command_route,
+            nuevo_proyecto_command::nuevo_proyecto_route
+        ],
     )
 }
 

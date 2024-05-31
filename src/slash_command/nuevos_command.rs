@@ -1,28 +1,19 @@
-
-
 use crate::pg_database::get_employee_by_ts_range;
 use crate::utils::{
     group_employees_by_month::group_employees_by_month, parse_interval::parse_interval,
     response_templates::new_employees_template, ParseDateStrError,
 };
 
-use rocket::{form::Form, http::Status, response::status};
+use crate::slash_command::types::SlackCommand;
 
-#[derive(FromForm, Debug)]
-pub struct ListNewsEmployeesCommand {
-    pub token: String,
-    pub api_app_id: String,
-    pub command: String,
-    pub text: String,
-    pub response_url: String,
-}
+use rocket::{form::Form, http::Status, response::status};
 
 #[post(
     "/command/nuevos",
     data = "<command>",
     format = "application/x-www-form-urlencoded"
 )]
-pub fn nuevos_command_route(command: Form<ListNewsEmployeesCommand>) -> status::Custom<String> {
+pub fn nuevos_command_route(command: Form<SlackCommand>) -> status::Custom<String> {
     let parsed = parse_interval(&command.text);
     match parsed {
         Ok((from, to)) => {

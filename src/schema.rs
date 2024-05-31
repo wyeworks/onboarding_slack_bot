@@ -36,9 +36,4 @@ diesel::joinable!(onboardees -> employees (employee_id));
 diesel::joinable!(onboardees -> projects (project_id));
 diesel::joinable!(projects -> employees (admin_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    admins,
-    employees,
-    onboardees,
-    projects,
-);
+diesel::allow_tables_to_appear_in_same_query!(admins, employees, onboardees, projects,);
